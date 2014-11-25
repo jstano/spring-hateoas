@@ -54,7 +54,7 @@ public class AnnotationRelProvider implements RelProvider, ApplicationContextAwa
 		return annotation.collectionRelation();
 	}
 
-	/* 
+	/*
 	 * (non-Javadoc)
 	 * @see org.springframework.hateoas.RelProvider#getRelForSingleResource(java.lang.Object)
 	 */
@@ -70,7 +70,7 @@ public class AnnotationRelProvider implements RelProvider, ApplicationContextAwa
 		return annotation.value();
 	}
 
-	/* 
+	/*
 	 * (non-Javadoc)
 	 * @see org.springframework.plugin.core.Plugin#supports(java.lang.Object)
 	 */
@@ -112,12 +112,14 @@ public class AnnotationRelProvider implements RelProvider, ApplicationContextAwa
 			return null;
 		}
 
-		for (String beanName : context.getBeanDefinitionNames()) {
+		if (context != null) {
+			for (String beanName : context.getBeanDefinitionNames()) {
 
-			Annotation annotation = context.findAnnotationOnBean(beanName, annotationType);
-			if (annotation != null && AnnotationUtils.getValue(annotation) == annotationValue) {
+				Annotation annotation = context.findAnnotationOnBean(beanName, annotationType);
+				if (annotation != null && AnnotationUtils.getValue(annotation) == annotationValue) {
 
-				return context.getType(beanName);
+					return context.getType(beanName);
+				}
 			}
 		}
 
