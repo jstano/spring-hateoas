@@ -30,7 +30,7 @@ import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
 /**
  * A simple {@link Resource} wrapping a domain object and adding links to it.
- * 
+ *
  * @author Oliver Gierke
  */
 @XmlRootElement
@@ -49,7 +49,7 @@ public class Resource<T> extends ResourceSupport {
 
 	/**
 	 * Creates a new {@link Resource} with the given content and {@link Link}s (optional).
-	 * 
+	 *
 	 * @param content must not be {@literal null}.
 	 * @param links the links to add to the {@link Resource}.
 	 */
@@ -59,7 +59,7 @@ public class Resource<T> extends ResourceSupport {
 
 	/**
 	 * Creates a new {@link Resource} with the given content and {@link Link}s.
-	 * 
+	 *
 	 * @param content must not be {@literal null}.
 	 * @param links the links to add to the {@link Resource}.
 	 */
@@ -70,7 +70,7 @@ public class Resource<T> extends ResourceSupport {
 
 	/**
 	 * Creates a new {@link Resource} with the given content and {@link Link}s.
-	 * 
+	 *
 	 * @param content must not be {@literal null}.
 	 * @param links the links to add to the {@link Resource}.
 	 */
@@ -85,7 +85,7 @@ public class Resource<T> extends ResourceSupport {
 
 	/**
 	 * Returns the underlying entity.
-	 * 
+	 *
 	 * @return the content
 	 */
 	@JsonUnwrapped
@@ -100,7 +100,7 @@ public class Resource<T> extends ResourceSupport {
 		return resources;
 	}
 
-	public Resource<T> withResources(Iterable<Resource> resources) {
+	public Resource<T> withResources(Iterable<? extends Resource<?>> resources) {
 
 		Collection<Resource> newResources = new ArrayList<Resource>();
 
@@ -108,27 +108,27 @@ public class Resource<T> extends ResourceSupport {
 			newResources.addAll(this.resources.getContent());
 		}
 
-		for (Resource resource : resources) {
+		for (Resource<?> resource : resources) {
 			newResources.add(resource);
 		}
 
 		return new Resource<T>(content, getLinks(), new Resources<Resource>(newResources));
 	}
 
-	public Resource<T> withResources(Resource... resources) {
+	public Resource<T> withResources(Resource<?>... resources) {
 
-		Collection<Resource> newResources = new ArrayList<Resource>();
+		Collection<Resource> embeddedResources = new ArrayList<Resource>();
 
 		if (this.resources != null) {
-			newResources.addAll(this.resources.getContent());
+			embeddedResources.addAll(this.resources.getContent());
 		}
 
-		Collections.addAll(newResources, resources);
+		Collections.addAll(embeddedResources, resources);
 
-		return new Resource<T>(content, getLinks(), new Resources<Resource>(newResources));
+		return new Resource<T>(content, getLinks(), new Resources<Resource>(embeddedResources));
 	}
 
-	/* 
+	/*
 	 * (non-Javadoc)
 	 * @see org.springframework.hateoas.ResourceSupport#toString()
 	 */
@@ -137,7 +137,7 @@ public class Resource<T> extends ResourceSupport {
 		return String.format("Resource { content: %s, %s }", getContent(), super.toString());
 	}
 
-	/* 
+	/*
 	 * (non-Javadoc)
 	 * @see org.springframework.hateoas.ResourceSupport#equals(java.lang.Object)
 	 */
@@ -158,7 +158,7 @@ public class Resource<T> extends ResourceSupport {
 		return contentEqual ? super.equals(obj) : false;
 	}
 
-	/* 
+	/*
 	 * (non-Javadoc)
 	 * @see org.springframework.hateoas.ResourceSupport#hashCode()
 	 */
