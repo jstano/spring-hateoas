@@ -4,7 +4,7 @@
 
 	<groupId>org.springframework.hateoas</groupId>
 	<artifactId>spring-hateoas</artifactId>
-	<version>0.17.2.UNIFOCUS</version>
+	<version>0.17.10.UNIFOCUS</version>
 
 	<name>Spring Hateoas</name>
 	<url>http://github.com/SpringSource/spring-hateoas</url>
@@ -60,7 +60,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring.version>3.2.9.RELEASE</spring.version>
 		<logback.version>1.1.2</logback.version>
-		<jackson.version>2.4.1</jackson.version>
+		<jackson.version>2.9.9</jackson.version>
 		<jaxrs.version>1.0</jaxrs.version>
 		<minidevjson.version>1.1.1</minidevjson.version>
 		<jsonpath.version>0.9.1</jsonpath.version>

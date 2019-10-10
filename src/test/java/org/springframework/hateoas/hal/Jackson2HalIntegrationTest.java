@@ -15,15 +15,7 @@
  */
 package org.springframework.hateoas.hal;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.hateoas.AbstractJackson2MarshallingIntegrationTest;
@@ -38,7 +30,14 @@ import org.springframework.hateoas.UriTemplate;
 import org.springframework.hateoas.core.AnnotationRelProvider;
 import org.springframework.hateoas.hal.Jackson2HalModule.HalHandlerInstantiator;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 
 /**
  * Integration tests for Jackson 2 HAL integration.
@@ -57,6 +56,7 @@ public class Jackson2HalIntegrationTest extends AbstractJackson2MarshallingInteg
 	static final String SINGLE_EMBEDDED_RESOURCE_REFERENCE = "{\"_links\":{\"self\":{\"href\":\"localhost\"}},\"_embedded\":{\"content\":[{\"text\":\"test1\",\"number\":1,\"_links\":{\"self\":{\"href\":\"localhost\"}}}]}}";
 	static final String LIST_EMBEDDED_RESOURCE_REFERENCE = "{\"_links\":{\"self\":{\"href\":\"localhost\"}},\"_embedded\":{\"content\":[{\"text\":\"test1\",\"number\":1,\"_links\":{\"self\":{\"href\":\"localhost\"}}},{\"text\":\"test2\",\"number\":2,\"_links\":{\"self\":{\"href\":\"localhost\"}}}]}}";
 	static final String RESOURCE_WITH_EMBEDDED_RESOURCE_REFERENCE = "{\"firstName\":\"Bill\",\"lastName\":\"Smith\",\"_embedded\":{\"pojos\":[{\"text\":\"AAAA\",\"number\":1},{\"text\":\"ZZZZ\",\"number\":2}],\"people\":[{\"firstName\":\"Kid\",\"lastName\":\"One\"},{\"firstName\":\"Kid\",\"lastName\":\"Two\"}]},\"_links\":{\"self\":{\"href\":\"localhost\"}}}";
+	static final String RESOURCE_WITH_EMPTY_EMBEDDED_RESOURCE_REFERENCE = "{\"firstName\":\"Bill\",\"lastName\":\"Smith\",\"_links\":{\"self\":{\"href\":\"localhost\"}}}";
 	static final String RESOURCE_WITH_NO_EMBEDDED_RESOURCE_REFERENCE = "{\"firstName\":\"Bill\",\"lastName\":\"Smith\",\"_links\":{\"self\":{\"href\":\"localhost\"}}}";
 
 	static final String ANNOTATED_EMBEDDED_RESOURCE_REFERENCE = "{\"_links\":{\"self\":{\"href\":\"localhost\"}},\"_embedded\":{\"pojos\":[{\"text\":\"test1\",\"number\":1,\"_links\":{\"self\":{\"href\":\"localhost\"}}}]}}";
@@ -227,6 +227,18 @@ public class Jackson2HalIntegrationTest extends AbstractJackson2MarshallingInteg
 		billSmith.add(new Link("localhost"));
 
 		assertThat(write(billSmith), is(RESOURCE_WITH_EMBEDDED_RESOURCE_REFERENCE));
+	}
+
+	@Test
+	public void rendersResourceWithEmptyEmbeddedResources() throws Exception {
+
+		Resource<PersonPojo> billSmith = new Resource<PersonPojo>(new PersonPojo("Bill", "Smith"));
+		List<Resource<PersonPojo>> kidResources = new ArrayList<Resource<PersonPojo>>();
+
+		billSmith = billSmith.withResources(kidResources);
+		billSmith.add(new Link("localhost"));
+
+		assertThat(write(billSmith), is(RESOURCE_WITH_EMPTY_EMBEDDED_RESOURCE_REFERENCE));
 	}
 
 	@Test
