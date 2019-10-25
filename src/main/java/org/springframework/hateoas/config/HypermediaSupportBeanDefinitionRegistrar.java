@@ -15,16 +15,7 @@
  */
 package org.springframework.hateoas.config;
 
-import static org.springframework.beans.factory.support.BeanDefinitionBuilder.*;
-import static org.springframework.beans.factory.support.BeanDefinitionReaderUtils.*;
-import static org.springframework.hateoas.MediaTypes.*;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -62,7 +53,15 @@ import org.springframework.util.ClassUtils;
 import org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
+import static org.springframework.beans.factory.support.BeanDefinitionBuilder.rootBeanDefinition;
+import static org.springframework.beans.factory.support.BeanDefinitionReaderUtils.registerBeanDefinition;
+import static org.springframework.hateoas.MediaTypes.HAL_JSON;
 
 /**
  * {@link ImportBeanDefinitionRegistrar} implementation to activate hypermedia support based on the configured
@@ -285,8 +284,14 @@ class HypermediaSupportBeanDefinitionRegistrar implements ImportBeanDefinitionRe
 			halConverter.setSupportedMediaTypes(Arrays.asList(HAL_JSON));
 			halConverter.setObjectMapper(halObjectMapper);
 
+			MappingJackson2HttpMessageConverter halResourceCollectionConverter = new TypeConstrainedMappingJackson2HttpMessageConverter(
+				Collection.class);
+			halResourceCollectionConverter.setSupportedMediaTypes(Arrays.asList(HAL_JSON));
+			halResourceCollectionConverter.setObjectMapper(halObjectMapper);
+
 			List<HttpMessageConverter<?>> result = new ArrayList<HttpMessageConverter<?>>(converters.size());
 			result.add(halConverter);
+			result.add(halResourceCollectionConverter);
 			result.addAll(converters);
 			return result;
 		}
